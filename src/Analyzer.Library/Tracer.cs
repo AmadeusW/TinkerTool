@@ -7,17 +7,17 @@ namespace Analyzer.Library
     {
         public void Post(object value)
         {
-            throw new NotImplementedException();
+            var data = new LoggedData(value);
         }
 
         public void Post(object value, string name = "")
         {
-            throw new NotImplementedException();
+            var data = new LoggedData(value, name);
         }
 
         public void Post(object value, string name = "", [CallerMemberName] string caller = "", [CallerFilePath] string file = "", [CallerLineNumber] int lineNumber = 0)
         {
-            throw new NotImplementedException();
+            var data = new LoggedData(value, name, caller, file, lineNumber);
         }
     }
 }
