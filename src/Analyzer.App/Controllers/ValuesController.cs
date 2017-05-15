@@ -3,12 +3,17 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.AspNetCore.SignalR;
+using Analyzer.App.Hubs;
 
 namespace Analyzer.App.Controllers
 {
     [Route("api/[controller]")]
     public class ValuesController : Controller
     {
+        // https://stackoverflow.com/questions/7549179/signalr-posting-a-message-to-a-hub-via-an-action-method
+        //private static IHubContext hubContext = GlobalHost.ConnectionManager.GetHubContext<Tracer>();
+
         // GET api/values
         [HttpGet]
         public IEnumerable<string> Get()
@@ -20,6 +25,7 @@ namespace Analyzer.App.Controllers
         [HttpGet("{id}")]
         public string Get(int id)
         {
+            //hubContext.Clients.Group("trace").addMessage($"Message: {id}");
             return "value";
         }
 
