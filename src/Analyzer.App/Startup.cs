@@ -7,6 +7,7 @@ using Microsoft.AspNetCore.Hosting;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Logging;
+using Analyzer.App.Hubs;
 
 namespace Analyzer.App
 {
@@ -38,6 +39,7 @@ namespace Analyzer.App
             loggerFactory.AddDebug();
 
             app.UseMvc();
+            app.UseSignalR(routes => routes.MapHub<Tracer>("/trace"));
         }
     }
 }
