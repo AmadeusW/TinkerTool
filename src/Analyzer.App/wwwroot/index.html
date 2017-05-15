@@ -6,7 +6,7 @@
 
    <script src="signalr-client.js"></script>
    <script>
-    var conn = new signalR.HubConnection('http://localhost:5000/chat');
+    var conn = new signalR.HubConnection('http://localhost:5000/trace');
     conn.on('Send', data => {
         var li = document.createElement('li');
         li.innerText = data;
