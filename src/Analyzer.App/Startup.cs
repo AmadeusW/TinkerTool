@@ -36,6 +36,7 @@ namespace Analyzer.App
             loggerFactory.AddConsole(Configuration.GetSection("Logging"));
             loggerFactory.AddDebug();
 
+            app.UseFileServer();
             app.UseMvc();
             app.UseSignalR(routes => routes.MapHub<Tracer>("/trace"));
         }
