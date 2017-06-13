@@ -8,6 +8,7 @@ using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Logging;
 using Analyzer.App.Hubs;
+using Analyzer.App.Models;
 
 namespace Analyzer.App
 {
@@ -29,6 +30,7 @@ namespace Analyzer.App
         {
             services.AddMvc();
             services.AddSignalR();
+            Repository.Start();
         }
 
         public void Configure(IApplicationBuilder app, IHostingEnvironment env, ILoggerFactory loggerFactory)

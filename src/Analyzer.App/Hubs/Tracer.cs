@@ -1,5 +1,6 @@
 using System.Threading.Tasks;
 using Microsoft.AspNetCore.SignalR;
+using Analyzer.App.Models;
 
 namespace Analyzer.App.Hubs
 {
@@ -14,6 +15,7 @@ namespace Analyzer.App.Hubs
                 {
                     var property = parsed[0].Trim();
                     var value = parsed[1].Trim();
+                    Repository.Set(property, value);
                     return Clients.All.InvokeAsync("Send", $"[{property}] := [{value}]");
                 }
             }
