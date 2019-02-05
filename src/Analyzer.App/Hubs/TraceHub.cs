@@ -18,6 +18,11 @@ namespace Analyzer.App.Hubs
             await Clients.All.SendAsync("TraceHub.SendMessage", user, message);
         }
 
+        public async Task Sample(string data)
+        {
+            await Clients.All.SendAsync("sample", data);
+        }
+
         public override Task OnConnectedAsync()
         {
             return base.OnConnectedAsync();

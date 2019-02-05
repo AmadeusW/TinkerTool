@@ -1,5 +1,4 @@
-using Microsoft.AspNet.SignalR.Client;
-using Microsoft.AspNet.SignalR.Client.Transports;
+using Microsoft.AspNetCore.SignalR.Client;
 using System;
 using System.Threading.Tasks;
 
@@ -8,6 +7,9 @@ namespace Analyzer.Library
     internal class Transmitter
     {
         static Transmitter _instance;
+        private bool _started;
+        private readonly HubConnection _connection;
+
         static Transmitter Instance
         {
             get
@@ -18,14 +20,36 @@ namespace Analyzer.Library
             }
         }
 
-        public Connection connection { get; }
-
         private Transmitter()
         {
-            // umm i'm getting 405 when trying to start the connection.
-            // how do I conect?
-            // see https://docs.microsoft.com/en-us/aspnet/signalr/overview/getting-started/supported-platforms#client-system-requirements
-            connection = new Connection("https://localhost:44343/trace");
+            _connection = new HubConnectionBuilder()
+                .WithUrl("https://localhost:44343/trace")
+                .Build();
+
+            _connection.On<string, string>("broadcastMessage", OnBroadcast);
+        }
+
+        private void OnBroadcast(string arg1, string arg2)
+        {
+            throw new NotImplementedException();
+        }
+
+        private async Task Connect()
+        {
+            if (_started)
+                return;
+
+            try
+            {
+                // TODO: Add thread safety to protect from calling StartAsync multiple times
+                // For example, koin the task which returns active connection
+                await _connection.StartAsync();
+                _started = true;
+            }
+            catch (Exception ex)
+            {
+                var message = ex.ToString();
+            }
         }
 
         internal static void Post(LoggedData data)
@@ -45,8 +69,9 @@ namespace Analyzer.Library
 
         internal async Task PostAsyncAndForget(LoggedData data)
         {
-            await connection.Start();
-            await connection.Send(data.ToString());
+            await Connect();
+            await _connection.InvokeAsync("Sample", data.ToString());
+            await _connection.InvokeAsync("SendMessage", "yoo", data.value.ToString());
         }
     }
 }

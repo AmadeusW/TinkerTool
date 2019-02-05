@@ -2,8 +2,8 @@ namespace Analyzer.Library
 {
     internal class LoggedData
     {
-        private object value;
-        private string name;
+        internal object value;
+        internal string name;
         private string caller;
         private string file;
         private int lineNumber;

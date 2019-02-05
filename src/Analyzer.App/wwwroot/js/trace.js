@@ -10,6 +10,12 @@ connection.on("TraceHub.SendMessage", function (user, message) {
     document.getElementById("messagesList").appendChild(li);
 });
 
+connection.on("sample", function (test) {
+    var li = document.createElement("li");
+    li.textContent = test;
+    document.getElementById("messagesList").appendChild(li);
+});
+
 connection.start().catch(function (err) {
     return console.error(err.toString());
 });
