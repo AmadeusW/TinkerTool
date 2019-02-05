@@ -7,6 +7,7 @@ namespace Analyzer.Library
     internal class Transmitter
     {
         static Transmitter _instance;
+        private static ICallbackClient _callback;
         private bool _started;
         private readonly HubConnection _connection;
 
@@ -20,6 +21,11 @@ namespace Analyzer.Library
             }
         }
 
+        internal static void RegisterCallback(ICallbackClient clientCallback)
+        {
+            _callback = clientCallback ?? throw new ArgumentNullException(nameof(clientCallback));
+        }
+
         private Transmitter()
         {
             _connection = new HubConnectionBuilder()
@@ -31,7 +37,7 @@ namespace Analyzer.Library
 
         private void OnBroadcast(string arg1, string arg2)
         {
-            throw new NotImplementedException();
+            _callback.Log(arg1, arg2);
         }
 
         private async Task Connect()
@@ -44,11 +50,12 @@ namespace Analyzer.Library
                 // TODO: Add thread safety to protect from calling StartAsync multiple times
                 // For example, koin the task which returns active connection
                 await _connection.StartAsync();
+                _callback.Log("Status", "Connected");
                 _started = true;
             }
             catch (Exception ex)
             {
-                var message = ex.ToString();
+                _callback.LogError(ex);
             }
         }
 
@@ -62,7 +69,7 @@ namespace Analyzer.Library
                 }
                 catch (Exception ex)
                 {
-                    var message = ex.ToString();
+                    _callback.LogError(ex);
                 }
             });
         }

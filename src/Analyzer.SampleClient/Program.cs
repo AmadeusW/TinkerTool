@@ -11,7 +11,7 @@ namespace Analyzer.SampleClient
     {
         static void Main(string[] args)
         {
-            var tracer = new Tracer();
+            var tracer = new Tracer(new CallbackClient());
             while (true)
             {
                 var input = Console.ReadLine();
@@ -26,6 +26,21 @@ namespace Analyzer.SampleClient
 
                 tracer.Post(input);
             }
+        }
+    }
+
+    class CallbackClient : ICallbackClient
+    {
+        public void Log(string category, string message)
+        {
+            Console.WriteLine(string.IsNullOrEmpty(category)
+                ? message
+                : $"{category}: {message}");
+        }
+
+        public void LogError(Exception ex)
+        {
+            Log(ex.GetType().ToString(), ex.Message);
         }
     }
 }

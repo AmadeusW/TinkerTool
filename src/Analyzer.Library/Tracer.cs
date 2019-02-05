@@ -5,6 +5,13 @@ namespace Analyzer.Library
 {
     public class Tracer : ITracer
     {
+        private ICallbackClient callbackClient;
+
+        public Tracer(ICallbackClient callbackClient)
+        {
+            Transmitter.RegisterCallback(callbackClient);
+        }
+
         public void Post(object value)
         {
             var data = new LoggedData(value);
