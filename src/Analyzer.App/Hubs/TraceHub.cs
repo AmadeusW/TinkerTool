@@ -16,6 +16,7 @@ namespace Analyzer.App.Hubs
         public async Task SendMessage(string user, string message)
         {
             await Clients.All.SendAsync("TraceHub.SendMessage", user, message);
+            await Clients.All.SendAsync("broadcastMessage", user, message);
         }
 
         public async Task Sample(string data)
