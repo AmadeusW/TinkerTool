@@ -14,13 +14,24 @@ namespace Analyzer.SampleClient
             var tracer = new Tracer(new CallbackClient());
             while (true)
             {
-                var input = Console.ReadLine();
+                var input = Console.ReadLine().Trim();
                 if (input.ToLowerInvariant() == "exit")
                     return;
 
-                if (input.ToLowerInvariant().StartsWith("="))
+                if (input.ToLowerInvariant().StartsWith("get "))
                 {
-                    tracer.Post("equals", "character");
+                    var split = input.Split(' ');
+                    var name = split[1];
+                    tracer.Get(name);
+                    continue;
+                }
+
+                if (input.ToLowerInvariant().StartsWith("set "))
+                {
+                    var split = input.Split(' ');
+                    var name = split[1];
+                    var value = split[2];
+                    tracer.Set(name, value);
                     continue;
                 }
 

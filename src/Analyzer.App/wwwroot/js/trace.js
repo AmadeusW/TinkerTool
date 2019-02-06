@@ -2,17 +2,15 @@
 
 var connection = new signalR.HubConnectionBuilder().withUrl("/trace").build();
 
-connection.on("TraceHub.SendMessage", function (user, message) {
-    var msg = message.replace(/&/g, "&amp;").replace(/</g, "&lt;").replace(/>/g, "&gt;");
-    var encodedMsg = user + " says " + msg;
+connection.on("setProperty", function (name, value) {
     var li = document.createElement("li");
-    li.textContent = encodedMsg;
+    li.textContent = name + " := " + value;
     document.getElementById("messagesList").appendChild(li);
 });
 
-connection.on("sample", function (test) {
+connection.on("property", function (name, value) {
     var li = document.createElement("li");
-    li.textContent = test;
+    li.textContent = name + " is " + value;
     document.getElementById("messagesList").appendChild(li);
 });
 
@@ -21,9 +19,9 @@ connection.start().catch(function (err) {
 });
 
 document.getElementById("sendButton").addEventListener("click", function (event) {
-    var user = document.getElementById("userInput").value;
-    var message = document.getElementById("messageInput").value;
-    connection.invoke("SendMessage", user, message).catch(function (err) {
+    var name = document.getElementById("nameInput").value;
+    var value = document.getElementById("valueInput").value;
+    connection.invoke("setProperty", user, message).catch(function (err) {
         return console.error(err.toString());
     });
     event.preventDefault();

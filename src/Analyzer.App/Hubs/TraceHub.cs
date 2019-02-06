@@ -8,6 +8,8 @@ namespace Analyzer.App.Hubs
 {
     public class TraceHub : Hub
     {
+        Dictionary<string, string> Properties = new Dictionary<string, string>();
+
         public TraceHub()
         {
 
@@ -19,9 +21,22 @@ namespace Analyzer.App.Hubs
             await Clients.All.SendAsync("broadcastMessage", user, message);
         }
 
-        public async Task Sample(string data)
+        public async Task getProperty(string name)
         {
-            await Clients.All.SendAsync("sample", data);
+            if (Properties.TryGetValue(name, out var value))
+            {
+                await Clients.Caller.SendAsync("property", name, value);
+            }
+            else
+            {
+                await Clients.Caller.SendAsync("property", name, string.Empty);
+            }
+        }
+
+        public async Task setProperty(string name, string value)
+        {
+            Properties[name] = value;
+            await Clients.All.SendAsync("property", name, value);
         }
 
         public override Task OnConnectedAsync()
