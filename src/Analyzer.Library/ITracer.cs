@@ -2,6 +2,9 @@
 
 namespace Analyzer.Library
 {
+    /// <summary>
+    /// Object which interacts with user code
+    /// </summary>
     public interface ITracer
     {
         void Get(string name);

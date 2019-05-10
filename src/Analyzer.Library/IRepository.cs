@@ -1,5 +1,8 @@
 ﻿namespace Analyzer.Library
 {
+    /// <summary>
+    /// A client side view of the data model
+    /// </summary>
     public interface IRepository
     {
         void Initialize();
