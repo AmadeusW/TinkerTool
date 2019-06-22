@@ -21,7 +21,7 @@ connection.start().catch(function (err) {
 document.getElementById("sendButton").addEventListener("click", function (event) {
     var name = document.getElementById("nameInput").value;
     var value = document.getElementById("valueInput").value;
-    connection.invoke("setProperty", user, message).catch(function (err) {
+    connection.invoke("setProperty", name, value).catch(function (err) {
         return console.error(err.toString());
     });
     event.preventDefault();

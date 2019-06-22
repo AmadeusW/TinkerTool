@@ -8,11 +8,13 @@ namespace Analyzer.App.Hubs
 {
     public class TraceHub : Hub
     {
-        Dictionary<string, string> Properties = new Dictionary<string, string>();
+        // Share properties because for every request we get a new instance of this type.
+        static Dictionary<string, string> Properties = null;
 
         public TraceHub()
         {
-
+            if (Properties == null)
+                Properties = new Dictionary<string, string>();
         }
 
         public async Task SendMessage(string user, string message)
