@@ -9,6 +9,10 @@ Developed program may probes the server for up to date value for use. The web in
 
 The Debug Center is built using Blazor and communication is accomplished with SignalR, which lets the client library to be cross platform and language agnostic.
 
+## Inspiration
+
+Inspired by [Bret Victor's _Seeing Spaces_](https://www.youtube.com/watch?v=klTjiXjqHrQ)
+
 ## Architecture
 | Component | Role |
 |---|---|
