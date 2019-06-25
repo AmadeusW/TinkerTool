@@ -11,7 +11,7 @@ The Debug Center is built using Blazor and communication is accomplished with Si
 
 ## Inspiration
 
-Inspired by [Bret Victor's _Seeing Spaces_](https://www.youtube.com/watch?v=klTjiXjqHrQ)
+Inspired by [Bret Victor's _Seeing Spaces_](http://worrydream.com/SeeingSpaces/
 
 ## Architecture
 | Component | Role |
