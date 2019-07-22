@@ -41,7 +41,7 @@ namespace Analyzer.SampleClient
                         tracer.Set(name, value);
                         break;
                     case "log":
-                        tracer.ReceiveInformation(name, value);
+                        tracer.Log(name, value);
                         break;
                     case "trace":
                         tracer.Trace("command", "call");

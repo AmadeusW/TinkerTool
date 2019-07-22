@@ -23,9 +23,9 @@ namespace Analyzer.Library
             repository = new Repository();
         }
 
-        public void Trace(object value, string name = "", [CallerMemberName] string caller = "", [CallerFilePath] string file = "", [CallerLineNumber] int lineNumber = 0)
+        public void Trace(string name, object value, [CallerMemberName] string caller = "", [CallerFilePath] string file = "", [CallerLineNumber] int lineNumber = 0)
         {
-            transmitter.Value.Post("trace", name, value.ToString(), caller, file, lineNumber.ToString());
+            transmitter.Value.SendTrace(name, value.ToString(), caller, file, lineNumber, threadId: 0, timestamp: DateTime.Now);
         }
 
         public object Get(string name)
@@ -36,7 +36,7 @@ namespace Analyzer.Library
             }
             else
             {
-                transmitter.Value.Post("get", name);
+                transmitter.Value.SendGet(name);
                 return null;
             }
         }
@@ -44,13 +44,17 @@ namespace Analyzer.Library
         public void Set(string name, string value)
         {
             repository.Set(name, value);
-            transmitter.Value.Post("set", name, value);
+            transmitter.Value.SendSet(name, value, DateTime.Now);
+        }
+
+        public void Log(string name, string value)
+        {
+            transmitter.Value.SendLog(name, value, DateTime.Now);
         }
 
         public void ReceiveInformation(string name, string value)
         {
             OnDiagnosticMessage(this, new NameValueEventArgs(name, value));
-            transmitter.Value.Post("log", name, value);
         }
 
         public void ReceiveError(Exception ex)

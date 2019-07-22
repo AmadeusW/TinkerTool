@@ -1,6 +1,7 @@
 using Analyzer.Library.Infrastructure;
 using Microsoft.AspNetCore.SignalR.Client;
 using System;
+using System.Threading;
 using System.Threading.Tasks;
 
 namespace Analyzer.Library
@@ -42,7 +43,8 @@ namespace Analyzer.Library
                 c.On<string, string>("broadcastMessage", OnBroadcast);
                 // Response to the GET request
                 c.On<string, string>("property", OnProperty);
-                // To be notified wenever a variable is set on the server, listen to "set"
+                // Response to user setting a value in the web UI
+                c.On<string, string>("setInUi", OnSet);
                 await c.StartAsync();
                 c.Closed += (exception) =>
                 {
@@ -56,27 +58,35 @@ namespace Analyzer.Library
             });
         }
 
-        internal void Post(string method, string arg1)
+        internal void SendGet(string name)
         {
             RunSafely(async () =>
             {
-                await (await connection).InvokeAsync(method, arg1);
+                await (await connection).InvokeAsync("get", name);
             });
         }
 
-        internal void Post(string method, string arg1, string arg2)
+        internal void SendSet(string name, string value, DateTime timestamp)
         {
             RunSafely(async () =>
             {
-                await (await connection).InvokeAsync(method, arg1, arg2);
+                await (await connection).InvokeAsync("set", name, value, timestamp);
             });
         }
 
-        internal void Post(string method, string arg1, string arg2, string arg3, string arg4, string arg5)
+        internal void SendLog(string name, string value, DateTime timestamp)
         {
             RunSafely(async () =>
             {
-                await (await connection).InvokeAsync(method, arg1, arg2, arg3, arg4, arg5);
+                await (await connection).InvokeAsync("log", name, value, timestamp);
+            });
+        }
+
+        internal void SendTrace(string name, string value, string caller, string fileName, int lineNumber, int threadId, DateTime timestamp)
+        {
+            RunSafely(async () =>
+            {
+                await (await connection).InvokeAsync("trace", name, value, caller, fileName, lineNumber, threadId, timestamp);
             });
         }
 
@@ -90,7 +100,12 @@ namespace Analyzer.Library
             _callback.NameValueChanged(name, value);
         }
 
-        internal void RunSafely(Action action)
+        private void OnSet(string name, string value)
+        {
+            _callback.NameValueChanged(name, value);
+        }
+
+        private void RunSafely(Action action)
         {
             Task.Run(() =>
             {

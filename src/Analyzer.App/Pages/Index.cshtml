@@ -1,26 +1,63 @@
 ﻿@page
-<div class="container">
-    <div class="row">&nbsp;</div>
-    <div class="row">
-        <div class="col-6">&nbsp;</div>
-        <div class="col-6">
-            Name: <input type="text" id="nameInput" />
-            <br />
-            Value: <input type="text" id="valueInput" />
-            <input type="button" id="sendButton" value="Set Property" />
+    <div class="container" id="app">
+
+        <p>{{status}}</p>
+
+        <div class="row" id="dataListRow">
+            <div class="col-6">
+                <ul id="dataList">
+                    <li v-for="item in dataTable" v-bind:title="item.timestamp">
+                        {{ item.name }}: {{ item.value }}
+                    </li>
+                </ul>
+            </div>
+            <div class="col-6">
+                <input class="search" placeholder="Search data" />
+                <button class="sort" data-sort="name">
+                    Sort
+                </button>
+                <div>
+                    Name: <input type="text" id="nameInput" />
+                    <br />
+                    Value: <input type="text" id="valueInput" />
+                    <input type="button" id="sendButton" value="Set Property" />
+                </div>
+            </div>
         </div>
-    </div>
-    <div class="row">
-        <div class="col-12">
-            <hr />
+
+        <div class="row" id="logListRow">
+            <div class="col-6">
+                <input class="search" placeholder="Search logs" />
+                <button class="sort" data-sort="name">
+                    Sort
+                </button>
+            </div>
+            <div class="col-6">
+                <ul id="logList">
+                    <li v-for="item in logTable" v-bind:title="item.timestamp">
+                        {{ item.name }}: {{ item.value }}
+                    </li>
+                </ul>
+            </div>
         </div>
-    </div>
-    <div class="row">
-        <div class="col-6">&nbsp;</div>
-        <div class="col-6">
-            <ul id="messagesList"></ul>
+
+        <div class="row" id="traceListRow">
+            <div class="col-6">
+                <input class="search" placeholder="Search traces" />
+                <button class="sort" data-sort="name">
+                    Sort
+                </button>
+            </div>
+            <div class="col-6">
+                <ul id="traceList">
+                    <li v-for="item in traceTable" v-bind:title="item.timestamp">
+                        [{{ item.caller }}:{{ item.lineNumber }}] {{ item.name }} = {{ item.value }}
+                    </li>
+                </ul>
+            </div>
         </div>
+
     </div>
-</div>
 <script src="~/lib/aspnet/signalr/dist/browser/signalr.js"></script>
+<script src="~/js/vue.js"></script>
 <script src="~/js/trace.js"></script>

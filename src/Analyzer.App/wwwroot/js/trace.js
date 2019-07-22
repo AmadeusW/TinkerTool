@@ -2,22 +2,36 @@
 
 var connection = new signalR.HubConnectionBuilder().withUrl("/trace").build();
 
-// From the TraceHub
-connection.on("set", function (name, value) {
-    var li = document.createElement("li");
-    li.textContent = `${name} = ${value}`;
-    document.getElementById("messagesList").appendChild(li);
+var app = new Vue({
+    el: '#app',
+    data: {
+        status: 'ok',
+        dataTable: [],
+        traceTable: [],
+        logTable: []
+    }
 });
-connection.on("trace", function (name, value, caller, fileName, lineNumber, timestamp) {
-    var li = document.createElement("li");
-    li.textContent = `${fileName}:${lineNumber} [${caller}] ${name} : ${value}`;
-    document.getElementById("messagesList").appendChild(li);
+
+// Handle communication with the TraceHub
+connection.on("set", function (name, value, timestamp) {
+    app.$data.dataTable.push({ name: name, value: value, timestamp: timestamp });
+});
+connection.on("trace", function (name, value, caller, fileName, lineNumber, threadId, timestamp) {
+    app.$data.traceTable.push({ name: name, value: value, caller: caller, fileName: fileName, lineNumber: lineNumber, threadId: threadId, timestamp: timestamp });
 });
 connection.on("log", function (name, value, timestamp) {
-    var li = document.createElement("li");
-    li.textContent = `${timestamp} [${name}] ${value}`;
-    document.getElementById("messagesList").appendChild(li);
+    app.$data.logTable.push({ name: name, value: value, timestamp: timestamp });
 });
+
+// Hook up the tables
+var dataOptions = {
+    valueNames: ['name'],
+    item: '<li><span class="name"></span>: <span class="value"></span></li>'
+};
+var logOptions = {
+    valueNames: ['name'],
+    item: '<li><span class="timespan"></span> [<span class="name"></span>] <span class="value"></span></li>'
+};
 
 connection.start().catch(function (err) {
     return console.error(err.toString());
@@ -26,7 +40,7 @@ connection.start().catch(function (err) {
 document.getElementById("sendButton").addEventListener("click", function (event) {
     var name = document.getElementById("nameInput").value;
     var value = document.getElementById("valueInput").value;
-    connection.invoke("property", name, value).catch(function (err) {
+    connection.invoke("setInUi", name, value).catch(function (err) {
         return console.error(err.toString());
     });
     event.preventDefault();

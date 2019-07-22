@@ -35,20 +35,28 @@ namespace Analyzer.App.Hubs
             }
         }
 
-        public async Task set(string name, string value)
+        public async Task set(string name, string value, string timestamp)
         {
+            // Value is set through the API
             Properties[name] = value;
-            await Clients.All.SendAsync("set", name, value);
+            await Clients.All.SendAsync("set", name, value, timestamp);
         }
 
-        public async Task log(string name, string value)
+        public async Task setInUi(string name, string value)
         {
-            await Clients.All.SendAsync("log", name, value);
+            // Value is set in the web UI
+            Properties[name] = value;
+            await Clients.All.SendAsync("setInUi", name, value);
         }
 
-        public async Task trace(string name, string value, string caller, string fileName, string lineNumber)
+        public async Task log(string name, string value, string timestamp)
         {
-            await Clients.All.SendAsync("trace", name, value, caller, fileName, lineNumber);
+            await Clients.All.SendAsync("log", name, value, timestamp);
+        }
+
+        public async Task trace(string name, string value, string caller, string fileName, int lineNumber, int threadId, string timestamp)
+        {
+            await Clients.All.SendAsync("trace", name, value, caller, fileName, lineNumber, threadId, timestamp);
         }
 
         public override Task OnConnectedAsync()
