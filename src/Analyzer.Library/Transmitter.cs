@@ -9,7 +9,7 @@ namespace Analyzer.Library
     {
         static Transmitter _instance;
         private ICallbackClient _callback;
-        private AsyncLazy<HubConnection> Connection { get; }
+        private AsyncLazy<HubConnection> connection;
 
         static internal Transmitter Instance
         {
@@ -28,7 +28,11 @@ namespace Analyzer.Library
 
         private Transmitter()
         {
-            Connection = new AsyncLazy<HubConnection>(async () =>
+            CreateNewConnection();
+        }
+        private void CreateNewConnection()
+        {
+            connection = new AsyncLazy<HubConnection>(async () =>
             {
                 var c = new HubConnectionBuilder()
                 .WithUrl("https://localhost:44343/trace")
@@ -37,6 +41,11 @@ namespace Analyzer.Library
                 c.On<string, string>("broadcastMessage", OnBroadcast);
                 c.On<string, string>("property", OnProperty);
                 await c.StartAsync();
+                c.Closed += (exception) =>
+                {
+                    CreateNewConnection();
+                    return Task.CompletedTask;
+                };
 
                 _callback.Log("Status", "Connected");
                 return c;
@@ -47,7 +56,7 @@ namespace Analyzer.Library
         {
             RunSafely(async () =>
             {
-                await (await Connection).InvokeAsync(method, arg1);
+                await (await connection).InvokeAsync(method, arg1);
             });
         }
 
@@ -55,7 +64,7 @@ namespace Analyzer.Library
         {
             RunSafely(async () =>
             {
-                await (await Connection).InvokeAsync(method, arg1, arg2);
+                await (await connection).InvokeAsync(method, arg1, arg2);
             });
         }
 
@@ -63,7 +72,7 @@ namespace Analyzer.Library
         {
             RunSafely(async () =>
             {
-                await (await Connection).InvokeAsync(method, arg1, arg2, arg3, arg4, arg5);
+                await (await connection).InvokeAsync(method, arg1, arg2, arg3, arg4, arg5);
             });
         }
 
