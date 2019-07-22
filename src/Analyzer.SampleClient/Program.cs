@@ -12,7 +12,11 @@ namespace Analyzer.SampleClient
     {
         static void Main(string[] args)
         {
-            var tracer = new Tracer(new CallbackClient());
+            var tracer = new Tracer();
+            tracer.OnDiagnosticMessage += (o, e) => Console.WriteLine($"{e.Name}: {e.Value}");
+            tracer.OnError += (o, e) => Console.WriteLine($"!{e.Name}: {e.Value}");
+            tracer.OnValueChanged += (o, e) => Console.WriteLine($"{e.Name} = {e.Value}");
+
             while (true)
             {
                 var input = Console.ReadLine().Trim();
@@ -30,13 +34,14 @@ namespace Analyzer.SampleClient
                     case "exit":
                         return;
                     case "get":
-                        tracer.Get(name);
+                        var getValue = tracer.Get(name);
+                        Console.WriteLine(getValue);
                         break;
                     case "set":
                         tracer.Set(name, value);
                         break;
                     case "log":
-                        tracer.Log(name, value);
+                        tracer.ReceiveInformation(name, value);
                         break;
                     case "trace":
                         tracer.Trace("command", "call");
@@ -46,21 +51,6 @@ namespace Analyzer.SampleClient
                         break;
                 }
             }
-        }
-    }
-
-    class CallbackClient : ICallbackClient
-    {
-        public void Log(string category, string message)
-        {
-            Console.WriteLine(string.IsNullOrEmpty(category)
-                ? message
-                : $"{category}: {message}");
-        }
-
-        public void LogError(Exception ex)
-        {
-            Log(ex.GetType().ToString(), ex.Message);
         }
     }
 }

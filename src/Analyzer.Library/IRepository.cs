@@ -1,13 +1,37 @@
-﻿namespace Analyzer.Library
+﻿using System;
+
+namespace Analyzer.Library
 {
     /// <summary>
     /// A client side view of the data model
     /// </summary>
     public interface IRepository
     {
-        void Initialize();
+        /// <summary>
+        /// Update all data from the server
+        /// </summary>
         void Pull();
-        object Get(string property);
-        void Set(string property, object value);
+
+        /// <summary>
+        /// Get specific piece of data
+        /// </summary>
+        /// <param name="property"></param>
+        /// <returns>Whether the value is immediately available</returns>
+        bool TryGet(string name, out object value);
+
+        /// <summary>
+        /// Set specific variable
+        /// </summary>
+        /// <param name="property"></param>
+        /// <param name="value"></param>
+        void Set(string name, object value);
+
+        /// <summary>
+        /// Set specific variable and return whether variable was changed
+        /// </summary>
+        /// <param name="property"></param>
+        /// <param name="value"></param>
+        /// <returns>Whether the value was changed</returns>
+        bool TryChange(string name, object value);
     }
 }

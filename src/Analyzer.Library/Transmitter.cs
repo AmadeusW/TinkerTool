@@ -21,15 +21,16 @@ namespace Analyzer.Library
             }
         }
 
-        internal void RegisterCallback(ICallbackClient clientCallback)
+        internal void RegisterCallback(ICallbackClient callback)
         {
-            _callback = clientCallback ?? throw new ArgumentNullException(nameof(clientCallback));
+            _callback = callback ?? throw new ArgumentNullException(nameof(callback));
         }
 
         private Transmitter()
         {
             CreateNewConnection();
         }
+
         private void CreateNewConnection()
         {
             connection = new AsyncLazy<HubConnection>(async () =>
@@ -39,16 +40,18 @@ namespace Analyzer.Library
                 .Build();
 
                 c.On<string, string>("broadcastMessage", OnBroadcast);
+                // Response to the GET request
                 c.On<string, string>("property", OnProperty);
+                // To be notified wenever a variable is set on the server, listen to "set"
                 await c.StartAsync();
                 c.Closed += (exception) =>
                 {
-                    _callback.Log("Status", "Connection lost");
+                    _callback.ReceiveInformation("Status", "Connection lost");
                     CreateNewConnection();
                     return Task.CompletedTask;
                 };
 
-                _callback.Log("Status", "Connected");
+                _callback.ReceiveInformation("Status", "Connected");
                 return c;
             });
         }
@@ -79,12 +82,12 @@ namespace Analyzer.Library
 
         private void OnBroadcast(string arg1, string arg2)
         {
-            _callback.Log(arg1, arg2);
+            _callback.ReceiveInformation(arg1, arg2);
         }
 
         private void OnProperty(string name, string value)
         {
-            _callback.Log("Property:", $"{name} = {value}");
+            _callback.NameValueChanged(name, value);
         }
 
         internal void RunSafely(Action action)
@@ -97,7 +100,7 @@ namespace Analyzer.Library
                 }
                 catch (Exception ex)
                 {
-                    _callback.LogError(ex);
+                    _callback.ReceiveError(ex);
                 }
             });
         }

@@ -1,4 +1,5 @@
-﻿using System.Runtime.CompilerServices;
+﻿using System;
+using System.Runtime.CompilerServices;
 
 namespace Analyzer.Library
 {
@@ -7,10 +8,13 @@ namespace Analyzer.Library
     /// </summary>
     public interface ITracer
     {
-        void Get(string name);
+        object Get(string name);
         void Set(string name, string value);
-        //void Post(object value);
-        //void Post(object value, string name = "");
+        void ReceiveInformation(string name, string value);
         void Trace(object value, string name = "", [CallerMemberNameAttribute] string caller = "", [CallerFilePathAttribute] string file = "", [CallerLineNumberAttribute] int lineNumber = 0);
+
+        event EventHandler<NameValueEventArgs> OnValueChanged;
+        event EventHandler<NameValueEventArgs> OnError;
+        event EventHandler<NameValueEventArgs> OnDiagnosticMessage;
     }
 }
