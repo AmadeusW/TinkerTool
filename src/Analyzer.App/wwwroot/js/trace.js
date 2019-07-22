@@ -8,7 +8,19 @@ var app = new Vue({
         status: 'ok',
         dataTable: [],
         traceTable: [],
-        logTable: []
+        logTable: [],
+        dataFilter: '',
+        traceFilter: '',
+        logFilter: '',
+    },
+    methods: {
+        filter: function (data, filter) {
+            return data.filter(function (item) {
+                return filter.trim().length === 0
+                    || item.name.toString().includes(filter)
+                    || item.value.toString().includes(filter);
+            });
+        }
     }
 });
 
@@ -23,20 +35,11 @@ connection.on("log", function (name, value, timestamp) {
     app.$data.logTable.push({ name: name, value: value, timestamp: timestamp });
 });
 
-// Hook up the tables
-var dataOptions = {
-    valueNames: ['name'],
-    item: '<li><span class="name"></span>: <span class="value"></span></li>'
-};
-var logOptions = {
-    valueNames: ['name'],
-    item: '<li><span class="timespan"></span> [<span class="name"></span>] <span class="value"></span></li>'
-};
-
 connection.start().catch(function (err) {
     return console.error(err.toString());
 });
 
+// Connect the set button
 document.getElementById("sendButton").addEventListener("click", function (event) {
     var name = document.getElementById("nameInput").value;
     var value = document.getElementById("valueInput").value;

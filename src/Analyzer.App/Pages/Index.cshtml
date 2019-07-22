@@ -6,35 +6,32 @@
         <div class="row" id="dataListRow">
             <div class="col-6">
                 <ul id="dataList">
-                    <li v-for="item in dataTable" v-bind:title="item.timestamp">
+                    <li v-for="item in filter(dataTable, dataFilter)" v-bind:title="item.timestamp">
                         {{ item.name }}: {{ item.value }}
                     </li>
                 </ul>
             </div>
             <div class="col-6">
-                <input class="search" placeholder="Search data" />
-                <button class="sort" data-sort="name">
-                    Sort
-                </button>
-                <div>
+                <p>
+                    <input v-model="dataFilter" placeholder="Search data" />
+                </p>
+                <p>
                     Name: <input type="text" id="nameInput" />
-                    <br />
                     Value: <input type="text" id="valueInput" />
                     <input type="button" id="sendButton" value="Set Property" />
-                </div>
+                </p>
             </div>
         </div>
 
         <div class="row" id="logListRow">
             <div class="col-6">
-                <input class="search" placeholder="Search logs" />
-                <button class="sort" data-sort="name">
-                    Sort
-                </button>
+                <p>
+                    <input v-model="logFilter" placeholder="Search logs" />
+                </p>
             </div>
             <div class="col-6">
                 <ul id="logList">
-                    <li v-for="item in logTable" v-bind:title="item.timestamp">
+                    <li v-for="item in filter(logTable, logFilter)" v-bind:title="item.timestamp">
                         {{ item.name }}: {{ item.value }}
                     </li>
                 </ul>
@@ -43,14 +40,13 @@
 
         <div class="row" id="traceListRow">
             <div class="col-6">
-                <input class="search" placeholder="Search traces" />
-                <button class="sort" data-sort="name">
-                    Sort
-                </button>
+                <p>
+                    <input v-model="traceFilter" placeholder="Search traces" />
+                </p>
             </div>
             <div class="col-6">
                 <ul id="traceList">
-                    <li v-for="item in traceTable" v-bind:title="item.timestamp">
+                    <li v-for="item in filter(traceTable, traceFilter)" v-bind:title="item.timestamp">
                         [{{ item.caller }}:{{ item.lineNumber }}] {{ item.name }} = {{ item.value }}
                     </li>
                 </ul>
