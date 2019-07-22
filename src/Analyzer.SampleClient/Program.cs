@@ -1,6 +1,7 @@
 ﻿using Analyzer.Library;
 using System;
 using System.Collections.Generic;
+using System.Diagnostics;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
@@ -15,27 +16,35 @@ namespace Analyzer.SampleClient
             while (true)
             {
                 var input = Console.ReadLine().Trim();
-                if (input.ToLowerInvariant() == "exit")
-                    return;
+                var inputs = input.Split(' ');
 
-                if (input.ToLowerInvariant().StartsWith("get "))
-                {
-                    var split = input.Split(' ');
-                    var name = split[1];
-                    tracer.Get(name);
+                if (inputs.Length == 0)
                     continue;
-                }
 
-                if (input.ToLowerInvariant().StartsWith("set "))
+                var command = inputs[0];
+                var name = inputs.Length >= 2 ? inputs[1] : string.Empty;
+                var value = inputs.Length >= 3 ? inputs[2] : string.Empty;
+
+                switch (command)
                 {
-                    var split = input.Split(' ');
-                    var name = split[1];
-                    var value = split[2];
-                    tracer.Set(name, value);
-                    continue;
+                    case "exit":
+                        return;
+                    case "get":
+                        tracer.Get(name);
+                        break;
+                    case "set":
+                        tracer.Set(name, value);
+                        break;
+                    case "log":
+                        tracer.Log(name, value);
+                        break;
+                    case "call":
+                        tracer.Post("command", "call");
+                        break;
+                    default:
+                        Console.WriteLine($"Unknown command {command}");
+                        break;
                 }
-
-                tracer.Post(input);
             }
         }
     }

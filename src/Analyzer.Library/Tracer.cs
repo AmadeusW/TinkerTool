@@ -34,5 +34,10 @@ namespace Analyzer.Library
         {
             transmitter.Value.Post("setProperty", name, value);
         }
+
+        public void Log(string name, string value)
+        {
+            throw new NotImplementedException();
+        }
     }
 }
