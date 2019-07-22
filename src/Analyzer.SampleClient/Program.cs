@@ -38,7 +38,7 @@ namespace Analyzer.SampleClient
                     case "log":
                         tracer.Log(name, value);
                         break;
-                    case "call":
+                    case "trace":
                         tracer.Trace("command", "call");
                         break;
                     default:

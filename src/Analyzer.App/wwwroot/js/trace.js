@@ -2,13 +2,6 @@
 
 var connection = new signalR.HubConnectionBuilder().withUrl("/trace").build();
 
-// from Button
-connection.on("setProperty", function (name, value) {
-    var li = document.createElement("li");
-    li.textContent = `SetProperty ${name} = ${value}`;
-    document.getElementById("messagesList").appendChild(li);
-});
-
 // From the TraceHub
 connection.on("set", function (name, value) {
     var li = document.createElement("li");
