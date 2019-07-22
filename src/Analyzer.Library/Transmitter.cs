@@ -43,6 +43,7 @@ namespace Analyzer.Library
                 await c.StartAsync();
                 c.Closed += (exception) =>
                 {
+                    _callback.Log("Status", "Connection lost");
                     CreateNewConnection();
                     return Task.CompletedTask;
                 };
