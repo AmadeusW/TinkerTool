@@ -39,7 +39,7 @@ namespace Analyzer.SampleClient
                         tracer.Log(name, value);
                         break;
                     case "call":
-                        tracer.Post("command", "call");
+                        tracer.Trace("command", "call");
                         break;
                     default:
                         Console.WriteLine($"Unknown command {command}");

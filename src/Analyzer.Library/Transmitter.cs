@@ -59,6 +59,14 @@ namespace Analyzer.Library
             });
         }
 
+        internal void Post(string method, string arg1, string arg2, string arg3, string arg4, string arg5)
+        {
+            RunSafely(async () =>
+            {
+                await (await Connection).InvokeAsync(method, arg1, arg2, arg3, arg4, arg5);
+            });
+        }
+
         private void OnBroadcast(string arg1, string arg2)
         {
             _callback.Log(arg1, arg2);
