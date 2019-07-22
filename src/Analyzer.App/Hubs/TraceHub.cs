@@ -23,7 +23,7 @@ namespace Analyzer.App.Hubs
             await Clients.All.SendAsync("broadcastMessage", user, message);
         }
 
-        public async Task getProperty(string name)
+        public async Task get(string name)
         {
             if (Properties.TryGetValue(name, out var value))
             {
@@ -35,10 +35,20 @@ namespace Analyzer.App.Hubs
             }
         }
 
-        public async Task setProperty(string name, string value)
+        public async Task set(string name, string value)
         {
             Properties[name] = value;
-            await Clients.All.SendAsync("property", name, value);
+            await Clients.All.SendAsync("set", name, value);
+        }
+
+        public async Task log(string name, string value)
+        {
+            await Clients.All.SendAsync("log", name, value);
+        }
+
+        public async Task trace(string name, string value, string caller, string fileName, string lineNumber)
+        {
+            await Clients.All.SendAsync("trace", name, value, caller, fileName, lineNumber);
         }
 
         public override Task OnConnectedAsync()

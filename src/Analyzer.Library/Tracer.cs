@@ -17,22 +17,24 @@ namespace Analyzer.Library
             });
         }
 
-        public void Post(object value, string name = "", [CallerMemberName] string caller = "", [CallerFilePath] string file = "", [CallerLineNumber] int lineNumber = 0)
+        public void Trace(object value, string name = "", [CallerMemberName] string caller = "", [CallerFilePath] string file = "", [CallerLineNumber] int lineNumber = 0)
         {
-            /*
-            var data = new LoggedData(value, name, caller, file, lineNumber);
-            transmitter.Value.Post(data);
-            */
+            transmitter.Value.Post("trace", name, value.ToString(), caller, file, lineNumber.ToString());
         }
 
         public void Get(string name)
         {
-            transmitter.Value.Post("getProperty", name);
+            transmitter.Value.Post("get", name);
         }
 
         public void Set(string name, string value)
         {
-            transmitter.Value.Post("setProperty", name, value);
+            transmitter.Value.Post("set", name, value);
+        }
+
+        public void Log(string name, string value)
+        {
+            transmitter.Value.Post("log", name, value);
         }
     }
 }

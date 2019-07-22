@@ -2,15 +2,20 @@
 
 var connection = new signalR.HubConnectionBuilder().withUrl("/trace").build();
 
-connection.on("setProperty", function (name, value) {
+// From the TraceHub
+connection.on("set", function (name, value) {
     var li = document.createElement("li");
-    li.textContent = name + " := " + value;
+    li.textContent = `${name} = ${value}`;
     document.getElementById("messagesList").appendChild(li);
 });
-
-connection.on("property", function (name, value) {
+connection.on("trace", function (name, value, caller, fileName, lineNumber, timestamp) {
     var li = document.createElement("li");
-    li.textContent = name + " is " + value;
+    li.textContent = `${fileName}:${lineNumber} [${caller}] ${name} : ${value}`;
+    document.getElementById("messagesList").appendChild(li);
+});
+connection.on("log", function (name, value, timestamp) {
+    var li = document.createElement("li");
+    li.textContent = `${timestamp} [${name}] ${value}`;
     document.getElementById("messagesList").appendChild(li);
 });
 
@@ -21,7 +26,7 @@ connection.start().catch(function (err) {
 document.getElementById("sendButton").addEventListener("click", function (event) {
     var name = document.getElementById("nameInput").value;
     var value = document.getElementById("valueInput").value;
-    connection.invoke("setProperty", name, value).catch(function (err) {
+    connection.invoke("set", name, value).catch(function (err) {
         return console.error(err.toString());
     });
     event.preventDefault();
