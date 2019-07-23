@@ -65,6 +65,7 @@ connection.on("set", function (name, value, timestamp) {
 });
 connection.on("trace", function (name, value, caller, fileName, lineNumber, threadId, timestamp) {
     app.$data.traceTable.push({ name: name, value: value, caller: caller, fileName: fileName, lineNumber: lineNumber, threadId: threadId, timestamp: timestamp });
+    app.$data.dataTable.push({ name: name, value: value, uid: `{fileName}:{lineNumber}` })
 });
 connection.on("log", function (name, value, timestamp) {
     app.$data.logTable.push({ name: name, value: value, timestamp: timestamp });
