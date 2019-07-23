@@ -7,7 +7,7 @@ var app = new Vue({
     data: {
         status: 'ok',
         // Displayed data
-        dataTable: [],
+        dataTable: [], // may need to use Blazor to use a hashset
         traceTable: [],
         logTable: [],
         // Filtering for the data
@@ -18,14 +18,14 @@ var app = new Vue({
         nameToSet: '',
         valueToSet: '',
         // Graphing
-        nameToGraph: '',
+        keyToGraph: '',
         chartVisible: false
     },
     methods: {
         filter: function (data, filter) {
             return data.filter(function (item) {
                 return filter.trim().length === 0
-                    || item.name.toString().includes(filter)
+                    || item.toString().includes(filter)
                     || item.value.toString().includes(filter);
             });
         },
@@ -38,12 +38,17 @@ var app = new Vue({
                 return console.error(err.toString());
             });
         },
-        graphClicked: function () {
+        graphClicked: function (event) {          
+            app.$data.keyToGraph = event.currentTarget.dataset.key;
+
             var smoothie = new SmoothieChart({ millisPerPixel: 100 });
             smoothie.streamTo(document.getElementById("chartCanvas"));
+
             chartData = new TimeSeries();
-            app.$data.chartVisible = true;
+            chartData.append(app.$data.dataTable[app.$datakeyToGraph]);
             smoothie.addTimeSeries(chartData);
+
+            app.$data.chartVisible = true;
         }
     }
 });
@@ -53,7 +58,7 @@ var chartData = {};
 // Handle communication with the TraceHub
 connection.on("set", function (name, value, timestamp) {
     app.$data.dataTable.push({ name: name, value: value, timestamp: timestamp });
-    if (app.$data.chartVisible) {
+    if (app.$data.keyToGraph === name) {
         var jsTime = Date.parse(timestamp);
         chartData.append(jsTime, value);
     }

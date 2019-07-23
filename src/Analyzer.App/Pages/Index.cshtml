@@ -4,25 +4,20 @@
         <p>{{status}}</p>
 
         <div class="row" id="dataListRow">
-            <div class="col-6">
-                <ul id="dataList">
-                    <li v-for="item in filter(dataTable, dataFilter)" v-bind:title="item.timestamp">
-                        {{ item.name }}: {{ item.value }}
-                    </li>
-                </ul>
-            </div>
-            <div class="col-6">
+            <div class="col-12">
                 <p>
                     <input type="text" v-model="dataFilter" placeholder="Search data" />
                 </p>
+                <ul id="dataList">
+                    <li v-for="item in filter(dataTable, dataFilter)" v-bind:title="item.timestamp">
+                        {{ item.name }}: <input type="text" v-model="item.value" /> <!-- changing value here does not work yet. add another set function -->
+                        <input type="button" v-on:click="graphClicked" value="Graph" v-bind:data-key="item.name" />
+                    </li>
+                </ul>
                 <p>
-                    <input type="text" v-model="nameToSet" placeholder="variable name" />
+                    <input type="text" v-model="nameToSet" placeholder="variable name" />:
                     <input type="text" v-model="valueToSet" placeholder="new value" />
                     <input type="button" v-on:click="setClicked" value="Set" />
-                </p>
-                <p>
-                    <input type="text" v-model="nameToGraph" placeholder="variable name" />
-                    <input type="button" v-on:click="graphClicked" value="Graph" />
                 </p>
             </div>
         </div>
@@ -59,7 +54,7 @@
 
         <div class="row" id="chartRow">
             <div class="col-12">
-                <canvas id="chartCanvas" width="800" height="400"></canvas>
+                <canvas id="chartCanvas" width="600" height="200"></canvas>
             </div>
         </div>
 
