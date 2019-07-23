@@ -18,7 +18,8 @@ var app = new Vue({
         nameToSet: '',
         valueToSet: '',
         // Graphing
-        nameToGraph: ''
+        nameToGraph: '',
+        chartVisible: false
     },
     methods: {
         filter: function (data, filter) {
@@ -38,14 +39,23 @@ var app = new Vue({
             });
         },
         graphClicked: function () {
-            alert(app.$data.nameToGraph);
+            var smoothie = new SmoothieChart();
+            smoothie.streamTo(document.getElementById("chartCanvas"));
+            chartData = new TimeSeries();
+            app.$data.chartVisible = true;
+            smoothie.addTimeSeries(chartData);
         }
     }
 });
 
+var chartData = {};
+
 // Handle communication with the TraceHub
 connection.on("set", function (name, value, timestamp) {
     app.$data.dataTable.push({ name: name, value: value, timestamp: timestamp });
+    if (app.$data.chartVisible) {
+        chartData.append(timestamp, value);
+    }
 });
 connection.on("trace", function (name, value, caller, fileName, lineNumber, threadId, timestamp) {
     app.$data.traceTable.push({ name: name, value: value, caller: caller, fileName: fileName, lineNumber: lineNumber, threadId: threadId, timestamp: timestamp });
