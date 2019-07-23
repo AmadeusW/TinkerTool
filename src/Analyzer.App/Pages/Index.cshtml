@@ -23,12 +23,10 @@
         </div>
 
         <div class="row" id="logListRow">
-            <div class="col-6">
+            <div class="col-12">
                 <p>
                     <input v-model="logFilter" placeholder="Search logs" />
                 </p>
-            </div>
-            <div class="col-6">
                 <ul id="logList">
                     <li v-for="item in filter(logTable, logFilter)" v-bind:title="item.timestamp">
                         {{ item.name }}: {{ item.value }}
@@ -38,12 +36,10 @@
         </div>
 
         <div class="row" id="traceListRow">
-            <div class="col-6">
+            <div class="col-12">
                 <p>
                     <input v-model="traceFilter" placeholder="Search traces" />
                 </p>
-            </div>
-            <div class="col-6">
                 <ul id="traceList">
                     <li v-for="item in filter(traceTable, traceFilter)" v-bind:title="item.timestamp">
                         [{{ item.caller }}:{{ item.lineNumber }}] {{ item.name }} = {{ item.value }}
