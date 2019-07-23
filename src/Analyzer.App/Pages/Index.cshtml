@@ -13,12 +13,16 @@
             </div>
             <div class="col-6">
                 <p>
-                    <input v-model="dataFilter" placeholder="Search data" />
+                    <input type="text" v-model="dataFilter" placeholder="Search data" />
                 </p>
                 <p>
-                    Name: <input type="text" id="nameInput" />
-                    Value: <input type="text" id="valueInput" />
-                    <input type="button" id="sendButton" value="Set Property" />
+                    <input type="text" v-model="nameToSet" placeholder="variable name" />
+                    <input type="text" v-model="valueToSet" placeholder="new value" />
+                    <input type="button" v-on:click="setClicked" value="Set" />
+                </p>
+                <p>
+                    <input type="text" v-model="nameToGraph" placeholder="variable name" />
+                    <input type="button" v-on:click="graphClicked" value="Graph" />
                 </p>
             </div>
         </div>

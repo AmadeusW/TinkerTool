@@ -6,12 +6,19 @@ var app = new Vue({
     el: '#app',
     data: {
         status: 'ok',
+        // Displayed data
         dataTable: [],
         traceTable: [],
         logTable: [],
+        // Filtering for the data
         dataFilter: '',
         traceFilter: '',
         logFilter: '',
+        // Setting
+        nameToSet: '',
+        valueToSet: '',
+        // Graphing
+        nameToGraph: ''
     },
     methods: {
         filter: function (data, filter) {
@@ -20,6 +27,18 @@ var app = new Vue({
                     || item.name.toString().includes(filter)
                     || item.value.toString().includes(filter);
             });
+        },
+        setClicked: function () {
+            connection.invoke(
+                "setInUi",
+                app.$data.nameToSet,
+                app.$data.valueToSet)
+            .catch(function (err) {
+                return console.error(err.toString());
+            });
+        },
+        graphClicked: function () {
+            alert(app.$data.nameToGraph);
         }
     }
 });
@@ -37,14 +56,4 @@ connection.on("log", function (name, value, timestamp) {
 
 connection.start().catch(function (err) {
     return console.error(err.toString());
-});
-
-// Connect the set button
-document.getElementById("sendButton").addEventListener("click", function (event) {
-    var name = document.getElementById("nameInput").value;
-    var value = document.getElementById("valueInput").value;
-    connection.invoke("setInUi", name, value).catch(function (err) {
-        return console.error(err.toString());
-    });
-    event.preventDefault();
 });
