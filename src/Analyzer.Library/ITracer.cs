@@ -11,7 +11,7 @@ namespace Analyzer.Library
         object Get(string name);
         void Set(string name, string value);
         void ReceiveInformation(string name, string value);
-        void Trace(object value, string name = "", [CallerMemberNameAttribute] string caller = "", [CallerFilePathAttribute] string file = "", [CallerLineNumberAttribute] int lineNumber = 0);
+        void Trace(string name, object value, [CallerMemberNameAttribute] string caller = "", [CallerFilePathAttribute] string file = "", [CallerLineNumberAttribute] int lineNumber = 0);
 
         event EventHandler<NameValueEventArgs> OnValueChanged;
         event EventHandler<NameValueEventArgs> OnError;

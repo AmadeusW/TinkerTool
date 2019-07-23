@@ -39,7 +39,7 @@ var app = new Vue({
             });
         },
         graphClicked: function () {
-            var smoothie = new SmoothieChart();
+            var smoothie = new SmoothieChart({ millisPerPixel: 100 });
             smoothie.streamTo(document.getElementById("chartCanvas"));
             chartData = new TimeSeries();
             app.$data.chartVisible = true;
@@ -54,7 +54,8 @@ var chartData = {};
 connection.on("set", function (name, value, timestamp) {
     app.$data.dataTable.push({ name: name, value: value, timestamp: timestamp });
     if (app.$data.chartVisible) {
-        chartData.append(timestamp, value);
+        var jsTime = Date.parse(timestamp);
+        chartData.append(jsTime, value);
     }
 });
 connection.on("trace", function (name, value, caller, fileName, lineNumber, threadId, timestamp) {

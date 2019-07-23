@@ -44,7 +44,7 @@ namespace Analyzer.SampleClient
                         tracer.Log(name, value);
                         break;
                     case "trace":
-                        tracer.Trace("command", "call");
+                        tracer.Trace("command", command);
                         break;
                     default:
                         Console.WriteLine($"Unknown command {command}");
