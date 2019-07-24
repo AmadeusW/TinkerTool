@@ -37,7 +37,7 @@ namespace Analyzer.Library
             connection = new AsyncLazy<HubConnection>(async () =>
             {
                 var c = new HubConnectionBuilder()
-                .WithUrl("https://localhost:44343/trace")
+                .WithUrl("https://localhost:44341/trace")
                 .Build();
 
                 c.On<string, string>("broadcastMessage", OnBroadcast);

@@ -10,6 +10,7 @@ using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
 using Analyzer.Blazor.Data;
+using Analyzer.Blazor.Hubs;
 
 namespace Analyzer.Blazor
 {
@@ -28,7 +29,8 @@ namespace Analyzer.Blazor
         {
             services.AddRazorPages();
             services.AddServerSideBlazor();
-            services.AddSingleton<WeatherForecastService>();
+            services.AddSingleton<DataService>();
+            services.AddSignalR();
         }
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.
@@ -49,7 +51,10 @@ namespace Analyzer.Blazor
             app.UseStaticFiles();
 
             app.UseRouting();
-
+            app.UseSignalR(routes =>
+            {
+                routes.MapHub<TraceHub>("/trace");
+            });
             app.UseEndpoints(endpoints =>
             {
                 endpoints.MapBlazorHub();

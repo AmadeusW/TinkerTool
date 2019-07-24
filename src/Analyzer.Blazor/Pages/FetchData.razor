@@ -1,12 +1,10 @@
 ﻿@page "/fetchdata"
 @using Analyzer.Blazor.Data
-@inject WeatherForecastService ForecastService
+@inject DataService DataService
 
-<h1>Weather forecast</h1>
+<h1>Logged Data</h1>
 
-<p>This component demonstrates fetching data from a service.</p>
-
-@if (forecasts == null)
+@if (DataService.GetData().Length == 0)
 {
     <p><em>Loading...</em></p>
 }
@@ -16,19 +14,19 @@ else
         <thead>
             <tr>
                 <th>Date</th>
-                <th>Temp. (C)</th>
-                <th>Temp. (F)</th>
-                <th>Summary</th>
+                <th>Name</th>
+                <th>Value</th>
+                <th>Actions</th>
             </tr>
         </thead>
         <tbody>
-            @foreach (var forecast in forecasts)
+            @foreach (var item in DataService.GetData())
             {
                 <tr>
-                    <td>@forecast.Date.ToShortDateString()</td>
-                    <td>@forecast.TemperatureC</td>
-                    <td>@forecast.TemperatureF</td>
-                    <td>@forecast.Summary</td>
+                    <td>@item.TimeStamp</td>
+                    <td>@item.Name</td>
+                    <td>@item.Value</td>
+                    <td></td>
                 </tr>
             }
         </tbody>
@@ -36,10 +34,10 @@ else
 }
 
 @code {
-    WeatherForecast[] forecasts;
+    LoggedData[] data;
 
     protected override async Task OnInitAsync()
     {
-        forecasts = await ForecastService.GetForecastAsync(DateTime.Now);
+        //data = await DataService.GetData();
     }
 }
