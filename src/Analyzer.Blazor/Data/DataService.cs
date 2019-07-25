@@ -18,10 +18,16 @@ namespace Analyzer.Blazor.Data
             Data = new Dictionary<DataId, LoggedData>();
         }
 
-        public async Task<LoggedData[]> GetFilteredData(string filter)
+        public event EventHandler OnDataUpdated;
+
+        public LoggedData[] GetFilteredData(string filter)
         {
+            filter = filter.Trim().ToLowerInvariant();
+            if (string.IsNullOrEmpty(filter))
+                return Data.Values.ToArray();
+
             return Data
-                .Where(n => n.Value.Name == filter || n.Value.Value == filter)
+                .Where(n => n.Value.Name.Contains(filter) || n.Value.Value.ToString().Contains(filter))
                 .Select(n => n.Value)
                 .ToArray();
         }
@@ -55,6 +61,7 @@ namespace Analyzer.Blazor.Data
                 TimeStamp = DateTime.Parse(timestamp),
                 Id = key,
             };
+            OnDataUpdated?.Invoke(this, EventArgs.Empty);
         }
 
         internal void Log(string name, string value, string timestamp)
@@ -66,6 +73,7 @@ namespace Analyzer.Blazor.Data
                 TimeStamp = DateTime.Parse(timestamp),
                 Id = key,
             };
+            OnDataUpdated?.Invoke(this, EventArgs.Empty);
         }
 
         internal void Set(string name, string value)
@@ -77,6 +85,7 @@ namespace Analyzer.Blazor.Data
                 TimeStamp = DateTime.Now,
                 Id = key,
             };
+            OnDataUpdated?.Invoke(this, EventArgs.Empty);
         }
     }
 }

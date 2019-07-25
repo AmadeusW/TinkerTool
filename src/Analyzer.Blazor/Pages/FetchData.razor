@@ -4,12 +4,15 @@
 
 <h1>Logged Data</h1>
 
-@if (DataService.GetData().Length == 0)
+@if (filteredData == null)
 {
     <p><em>Loading...</em></p>
 }
 else
 {
+    <p>
+        Search: <input type="text" placeholder="filter" value="@filter"/>
+    </p>
     <table class="table">
         <thead>
             <tr>
@@ -20,7 +23,7 @@ else
             </tr>
         </thead>
         <tbody>
-            @foreach (var item in DataService.GetData())
+            @foreach (var item in filteredData)
             {
                 <tr>
                     <td>@item.TimeStamp</td>
@@ -29,15 +32,28 @@ else
                     <td></td>
                 </tr>
             }
+            <tr>
+                <td></td>
+                <td><input type="text" placeholder="name" /> </td>
+                <td><input type="text" placeholder="name" /> </td>
+                <td><input type="button" text="Set"/></td>
+            </tr>
         </tbody>
     </table>
 }
 
 @code {
-    LoggedData[] data;
+    LoggedData[] filteredData;
+    string filter = string.Empty;
 
     protected override async Task OnInitAsync()
     {
-        //data = await DataService.GetData();
+        DataService.OnDataUpdated += DataUpdatedHandler;
+        filteredData = DataService.GetFilteredData(filter);
+    }
+
+    private void DataUpdatedHandler(object sender, EventArgs e)
+    {
+        filteredData = DataService.GetFilteredData(filter);
     }
 }
