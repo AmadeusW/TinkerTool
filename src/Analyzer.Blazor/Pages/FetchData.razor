@@ -11,7 +11,7 @@
 else
 {
     <p>
-        Search: <input type="text" placeholder="filter" value="@filter"/>
+        Search: <input type="text" placeholder="filter" bind-value-oninput="@filter"/>
     </p>
     <table class="table">
         <thead>
@@ -34,9 +34,9 @@ else
             }
             <tr>
                 <td></td>
-                <td><input type="text" placeholder="name" /> </td>
-                <td><input type="text" placeholder="name" /> </td>
-                <td><input type="button" text="Set"/></td>
+                <td><input type="text" placeholder="name" @bind="@newKey" /> </td>
+                <td><input type="text" placeholder="name" @bind="@newValue" /> </td>
+                <td><input type="button" @onclick="SetData">Set</input></td>
             </tr>
         </tbody>
     </table>
@@ -44,12 +44,29 @@ else
 
 @code {
     LoggedData[] filteredData;
-    string filter = string.Empty;
+    string _filter = string.Empty;
+    // TODO: can I get rid of this code and use binding in foreach?
+    string filter {
+        get {
+            return _filter;
+        }
+        set {
+            _filter = value;
+            filteredData = DataService.GetFilteredData(value);
+        }
+    }
+    string newKey = string.Empty;
+    string newValue = string.Empty;
 
     protected override async Task OnInitAsync()
     {
         DataService.OnDataUpdated += DataUpdatedHandler;
         filteredData = DataService.GetFilteredData(filter);
+    }
+
+    private void SetData()
+    {
+        DataService.Set(newKey, newValue);
     }
 
     private void DataUpdatedHandler(object sender, EventArgs e)
