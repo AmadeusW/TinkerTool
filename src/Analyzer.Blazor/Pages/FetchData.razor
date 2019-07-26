@@ -4,14 +4,14 @@
 
 <h1>Logged Data</h1>
 
-@if (filteredData == null)
+@if (DataSnapshot == null)
 {
     <p><em>Loading...</em></p>
 }
 else
 {
     <p>
-        Search: <input type="text" placeholder="filter" bind-value-oninput="@filter"/>
+        Search: <input type="text" placeholder="filter" @bind-value="@filter" @bind-value:event="oninput"/>
     </p>
     <table class="table">
         <thead>
@@ -23,7 +23,7 @@ else
             </tr>
         </thead>
         <tbody>
-            @foreach (var item in filteredData)
+            @foreach (var item in FilteredData)
             {
                 <tr>
                     <td>@item.TimeStamp</td>
@@ -36,32 +36,47 @@ else
                 <td></td>
                 <td><input type="text" placeholder="name" @bind="@newKey" /> </td>
                 <td><input type="text" placeholder="name" @bind="@newValue" /> </td>
-                <td><input type="button" @onclick="SetData">Set</input></td>
+                <td><input type="button" @onclick="SetData" value="Set" style="width: 60px" /> </td>
             </tr>
         </tbody>
     </table>
 }
 
 @code {
-    LoggedData[] filteredData;
-    string _filter = string.Empty;
-    // TODO: can I get rid of this code and use binding in foreach?
-    string filter {
-        get {
-            return _filter;
+        LoggedData[] DataSnapshot {get; set;}
+        LoggedData[] FilteredData
+        {
+            get
+            {
+                var f = filter.Trim().ToLowerInvariant();
+                if (string.IsNullOrEmpty(f))
+                    return DataSnapshot;
+
+                return DataSnapshot
+                    .Where(n => n.Name.Contains(f) || n.Value.ToString().Contains(f))
+                    .ToArray();
+            }
         }
-        set {
-            _filter = value;
-            filteredData = DataService.GetFilteredData(value);
+        string filter { get; set; } = string.Empty;
+    /*
+        // TODO: can I get rid of this code and use binding in foreach?
+        string filter {
+            get {
+                return _filter;
+            }
+            set {
+                _filter = value;
+                DataSnapshot = DataService.GetData(value);
+            }
         }
-    }
-    string newKey = string.Empty;
-    string newValue = string.Empty;
+        */
+        string newKey = string.Empty;
+        string newValue = string.Empty;
 
     protected override async Task OnInitAsync()
     {
+        DataSnapshot = DataService.GetData();
         DataService.OnDataUpdated += DataUpdatedHandler;
-        filteredData = DataService.GetFilteredData(filter);
     }
 
     private void SetData()
@@ -71,6 +86,6 @@ else
 
     private void DataUpdatedHandler(object sender, EventArgs e)
     {
-        filteredData = DataService.GetFilteredData(filter);
+        DataSnapshot = DataService.GetData();
     }
 }

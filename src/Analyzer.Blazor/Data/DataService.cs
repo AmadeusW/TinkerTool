@@ -20,18 +20,6 @@ namespace Analyzer.Blazor.Data
 
         public event EventHandler OnDataUpdated;
 
-        public LoggedData[] GetFilteredData(string filter)
-        {
-            filter = filter.Trim().ToLowerInvariant();
-            if (string.IsNullOrEmpty(filter))
-                return Data.Values.ToArray();
-
-            return Data
-                .Where(n => n.Value.Name.Contains(filter) || n.Value.Value.ToString().Contains(filter))
-                .Select(n => n.Value)
-                .ToArray();
-        }
-
         internal bool TryGetValue(string name, out object value)
         {
             var key = new DataId(name);
