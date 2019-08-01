@@ -70,5 +70,10 @@ namespace Analyzer.Blazor.Data
         {
             return FileName == default && Name == name;
         }
+
+        public override string ToString()
+        {
+            return string.IsNullOrEmpty(FileName) ? Name : $"{Name} ({FileName}:{LineNumber})";
+        }
     }
 }
