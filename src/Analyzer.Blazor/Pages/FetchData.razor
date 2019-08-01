@@ -87,5 +87,6 @@ else
     private void DataUpdatedHandler(object sender, EventArgs e)
     {
         DataSnapshot = DataService.GetData();
+        this.Invoke(() => this.StateHasChanged());
     }
 }
