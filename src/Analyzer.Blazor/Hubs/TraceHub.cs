@@ -15,6 +15,7 @@ namespace Analyzer.Blazor.Hubs
         public TraceHub(DataService dataService)
         {
             this.dataService = dataService;
+            dataService.SetInUiHandler = SetInUiCallback;
         }
 
         public async Task SendMessage(string user, string message)
@@ -42,14 +43,6 @@ namespace Analyzer.Blazor.Hubs
             //await Clients.All.SendAsync("set", name, value, timestamp);
         }
 
-        /*
-        public async Task setInUi(string name, string value)
-        {
-            // Value is set in the web UI
-            Properties[name] = value;
-            await Clients.All.SendAsync("setInUi", name, value);
-        }*/
-
         public async Task log(string name, string value, string timestamp)
         {
             dataService.Log(name, value, timestamp);
@@ -64,6 +57,12 @@ namespace Analyzer.Blazor.Hubs
         public override Task OnConnectedAsync()
         {
             return base.OnConnectedAsync();
+        }
+
+        private async Task SetInUiCallback(string name, string value)
+        {
+            // Value was set in the web UI. Notify the clients
+            await Clients.All.SendAsync("setInUi", name, value);
         }
     }
 }

@@ -1,3 +1,5 @@
+using Microsoft.AspNetCore.SignalR.Client;
+using Microsoft.Net.Http.Headers;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -10,6 +12,8 @@ namespace Analyzer.Blazor.Data
     {
         // Share properties because for every request we get a new instance of this type.
         static Dictionary<DataId, LoggedData> Data = null;
+
+        public Func<string, string, Task> SetInUiHandler { get; internal set; }
 
         public DataService()
         {
@@ -66,6 +70,18 @@ namespace Analyzer.Blazor.Data
 
         internal void Set(string name, string value)
         {
+            SetCore(name, value);
+            OnDataUpdated?.Invoke(this, EventArgs.Empty);
+        }
+
+        internal void SetInUi(string name, string value)
+        {
+            SetCore(name, value);
+            Task.Run(async () => await SetInUiHandler(name, value));
+        }
+
+        private void SetCore(string name, string value)
+        {
             var key = new DataId(name);
             Data[key] = new LoggedData
             {
@@ -73,7 +89,6 @@ namespace Analyzer.Blazor.Data
                 TimeStamp = DateTime.Now,
                 Id = key,
             };
-            OnDataUpdated?.Invoke(this, EventArgs.Empty);
         }
     }
 }

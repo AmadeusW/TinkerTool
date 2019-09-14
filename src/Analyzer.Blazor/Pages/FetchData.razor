@@ -1,6 +1,7 @@
 ﻿@page "/fetchdata"
 @using Analyzer.Blazor.Data
 @inject DataService DataService
+@inject IJSRuntime JsRuntime;
 
 <h1>Logged Data</h1>
 
@@ -11,7 +12,7 @@
 else
 {
     <p>
-        Search: <input type="text" placeholder="filter" @bind-value="@filter" @bind-value:event="oninput"/>
+        Search: <input type="text" placeholder="filter" @bind-value="@filter" @bind-value:event="oninput" />
     </p>
     <table class="table">
         <thead>
@@ -43,21 +44,21 @@ else
 }
 
 @code {
-        LoggedData[] DataSnapshot {get; set;}
-        LoggedData[] FilteredData
+    LoggedData[] DataSnapshot { get; set; }
+    LoggedData[] FilteredData
+    {
+        get
         {
-            get
-            {
-                var f = filter.Trim().ToLowerInvariant();
-                if (string.IsNullOrEmpty(f))
-                    return DataSnapshot;
+            var f = filter.Trim().ToLowerInvariant();
+            if (string.IsNullOrEmpty(f))
+                return DataSnapshot;
 
-                return DataSnapshot
-                    .Where(n => n.Name.Contains(f) || n.Value.ToString().Contains(f))
-                    .ToArray();
-            }
+            return DataSnapshot
+                .Where(n => n.Name.Contains(f) || n.Value.ToString().Contains(f))
+                .ToArray();
         }
-        string filter { get; set; } = string.Empty;
+    }
+    string filter { get; set; } = string.Empty;
     /*
         // TODO: can I get rid of this code and use binding in foreach?
         string filter {
@@ -70,8 +71,8 @@ else
             }
         }
         */
-        string newKey = string.Empty;
-        string newValue = string.Empty;
+    string newKey = string.Empty;
+    string newValue = string.Empty;
 
     protected override async Task OnInitAsync()
     {
@@ -81,7 +82,9 @@ else
 
     private void SetData()
     {
-        DataService.Set(newKey, newValue);
+        // This is an unnecessarily long way to call
+        // JS -> SignalR -> Clients
+        JsRuntime.InvokeAsync<bool>("setClicked", newKey, newValue);
     }
 
     private void DataUpdatedHandler(object sender, EventArgs e)

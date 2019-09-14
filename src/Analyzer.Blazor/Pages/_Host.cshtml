@@ -16,5 +16,18 @@
     <app>@(await Html.RenderComponentAsync<App>())</app>
 
     <script src="_framework/blazor.server.js"></script>
+    <script>
+        var connection = new signalR.HubConnectionBuilder().withUrl("/trace").build();
+        var setClicked = function () {
+            connection.invoke(
+                "setInUi",
+                app.$data.nameToSet,
+                app.$data.valueToSet)
+                .catch(function (err) {
+                    return console.error(err.toString());
+                });
+            return true;
+        }
+    </script>
 </body>
 </html>
